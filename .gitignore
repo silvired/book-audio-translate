@@ -1,0 +1,9 @@
+# Ignore contents of old_versions, example input, and merged_audio_output, but keep the folders
+old_versions/*
+!old_versions/.gitkeep
+
+example input/*
+!example input/.gitkeep
+
+merged_audio_output/*
+!merged_audio_output/.gitkeep 
