@@ -103,8 +103,8 @@ echo "Using Python: $PYTHON_CMD"
 echo "Python version: $($PYTHON_CMD --version)"
 
 # Check if we're in the correct directory
-if [ ! -f "run_pipeline_v2.py" ]; then
-    echo "Error: run_pipeline_v2.py not found!"
+if [ ! -f "run_pipeline_v3.py" ]; then
+    echo "Error: run_pipeline_v3.py not found!"
     echo "Please run this script from the project root directory"
     exit 1
 fi
@@ -131,7 +131,7 @@ echo "=== Running Pipeline ==="
 echo "Updating pipeline to use $PYTHON_CMD..."
 
 # Create a temporary version of the pipeline with the correct Python version
-sed "s/python3\.10/$PYTHON_CMD/g" run_pipeline_v2.py > run_pipeline_temp.py
+sed "s/python3\.10/$PYTHON_CMD/g" run_pipeline_v3.py > run_pipeline_temp.py
 
 # Run the pipeline
 $PYTHON_CMD run_pipeline_temp.py
