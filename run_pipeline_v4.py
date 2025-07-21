@@ -3,6 +3,7 @@ import sys
 import os
 from book_to_text import PDFToText
 from text_to_speech_chunks import CoquiTTS
+from merge_audio_chunks import MergeAudioChunks
 
 def run_step(description, command, capture_output=False):
     print(f"\n=== {description} ===")
@@ -58,11 +59,18 @@ if __name__ == "__main__":
         print(f"Error during text to audio conversion: {e}")
         sys.exit(1)
 
-    # Step 3: Merge audio chunks into 30-minute files
-    run_step(
-        "Merging audio chunks into 30-minute files",
-        ["python3.10", "merge_audio_chunks.py"]
-    )
+    # Step 3: Merge audio chunks into 30-minute files using object-oriented approach
+    print("\n=== Merging audio chunks into 30-minute files using MergeAudioChunks class ===")
+    try:
+        # Initialize the MergeAudioChunks object
+        audio_merger = MergeAudioChunks()
+        
+        # Merge the audio chunks
+        num_merged_files = audio_merger.merge_chunks()
+        print(f"Successfully created {num_merged_files} merged audio files")
+    except Exception as e:
+        print(f"Error during audio merging: {e}")
+        sys.exit(1)
     
     # Step 4: Cleanup temporary files
     print("\n=== Cleaning up temporary files ===")

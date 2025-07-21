@@ -1,24 +1,29 @@
 # PDF to Audio Pipeline
 
-This project converts PDF ebooks to high-quality audio files using advanced Text-to-Speech (TTS) models. The pipeline is fully automated and supports multiple languages.
+This project converts PDF ebooks to high-quality audio files using advanced Text-to-Speech (TTS) models. The pipeline is fully automated, object-oriented, and supports multiple languages.
 
 ## Quick Start (Recommended)
 
-### 1. Place your PDF file
-- Put your PDF(s) in the `pdf_input/` folder.
+### 1. Install dependencies
+```bash
+pip install -r requirements.txt
+```
 
-### 2. Run the pipeline
+### 2. Place your PDF file
+- Put your PDF(s) in the `input_book/` folder.
+
+### 3. Run the pipeline
 ```bash
 ./run_pipeline.sh
 ```
 - The script will:
   - Detect and use the best available Python version (3.10+ required)
-  - Install all required dependencies (`TTS`, `pydub`, `PyPDF2`, `pymupdf`)
-  - Run the full pipeline:
-    - Convert the first PDF in `pdf_input/` to text
-    - Convert the text to audio chunks
-    - Merge audio chunks into ~30-minute `.wav` files in `merged_audio_output/`
-    - Clean up temporary files
+  - Install all required dependencies automatically
+  - Run the full object-oriented pipeline:
+    - Convert the first PDF in `input_book/` to text using `PDFToText` class
+    - Convert the text to audio chunks using `CoquiTTS` class
+    - Merge audio chunks into ~30-minute `.wav` files using `MergeAudioChunks` class
+    - Clean up temporary files and `__pycache__` folders
 
 ## Manual Usage
 
@@ -26,24 +31,41 @@ If you prefer to run manually:
 
 1. **Install dependencies**:
    ```bash
-   pip install TTS pydub PyPDF2 pymupdf
+   pip install -r requirements.txt
    ```
 2. **Run the pipeline**:
    ```bash
-   python run_pipeline_v2.py
+   python run_pipeline_v4.py
    ```
+
+## Setup Verification
+
+To verify your setup is working correctly:
+```bash
+python verify_setup.py
+```
+This will check:
+- Python version compatibility
+- All required dependencies
+- Project structure
+- Input files
+- Class imports
 
 ## Project Structure
 
 ```
 ebook to audio/
-├── pdf_input/                # Place your PDF files here
-├── convert ebook to text/    # Temporary text files
+├── input_book/               # Place your PDF files here
+├── text_output/              # Temporary text files (auto-cleaned)
 ├── audio_output/             # Temporary audio chunks (auto-cleaned)
 ├── merged_audio_output/      # Final merged audio files
 ├── run_pipeline.sh           # Main shell script (recommended)
-├── run_pipeline_v2.py        # Python pipeline (manual)
-├── merge_audio_chunks.py     # Audio merging script
+├── run_pipeline_v4.py        # Object-oriented Python pipeline
+├── book_to_text.py           # PDF to text conversion classes
+├── text_to_speech_chunks.py  # Text to speech conversion classes
+├── merge_audio_chunks.py     # Audio merging classes
+├── requirements.txt          # Python dependencies
+├── verify_setup.py           # Setup verification script
 ├── check_merged_durations.py # Utility: check merged audio durations
 ```
 
@@ -78,15 +100,18 @@ ebook to audio/
 
 ## Requirements
 
-- Python 3.10 or 3.11 (3.9 may work but is not recommended)
+- **Python 3.10 or 3.11** (Python 3.9 is NOT supported due to TTS library compatibility issues)
 - Internet connection (for TTS model download)
 - Sufficient disk space for audio files
 
+**Important**: The pipeline requires Python 3.10+ to work correctly. Python 3.9 will cause import errors with the TTS library.
+
 ## Troubleshooting
 
-- **Python Version**: The shell script will guide you if your Python version is incompatible.
+- **Python Version**: The pipeline requires Python 3.10+. If you have Python 3.9 or lower, you'll need to upgrade. The shell script will guide you if your Python version is incompatible.
 - **TTS Model Download**: The first run will download the TTS model (~150MB).
 - **Audio Quality**: Uses high-quality models for each language. Some special characters may be discarded but do not affect audio quality.
+- **Import Errors**: If you see "unsupported operand type(s) for |: 'type' and 'NoneType'", this indicates you're using Python 3.9. Upgrade to Python 3.10+.
 
 ---
 
