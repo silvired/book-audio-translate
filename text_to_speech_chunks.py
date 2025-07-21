@@ -1,8 +1,11 @@
 import os
 import sys
 import torch
+import time
 from abc import ABC, abstractmethod
 from TTS.api import TTS
+
+from gtts import gTTS
 
 
 class TextToSpeechConverter(ABC):
@@ -34,17 +37,73 @@ class TextToSpeechConverter(ABC):
         self.output_dir = output_dir
     
     @abstractmethod
-    def convert_to_speech(self, input_path):
+    def synthesize_chunk_to_file(self, chunk, output_path):
         """
-        Convert a text file to speech.
-        
+        Synthesize a single chunk of text to an audio file.
         Args:
-            input_path (str): Path to the text file to convert.
-            
-        Returns:
-            str: Path to the output audio file.
+            chunk (str): The text chunk to synthesize.
+            output_path (str): The path to save the audio file.
         """
         pass
+    
+    def convert_to_speech(self, input_path):
+        """
+        Convert a text file to speech, splitting into chunks and saving each as an audio file.
+        Args:
+            input_path (str): Path to the text file to convert.
+        Returns:
+            str: Path to the first output audio chunk file (or None if none created).
+        """
+        import time
+        from datetime import datetime
+        start_time = time.time()
+        start_dt = datetime.now()
+        print(f"executing TTS conversion at {start_dt.strftime('%Y-%m-%d %H:%M:%S')}")
+
+        # Read the text from the file
+        try:
+            with open(input_path, 'r', encoding='utf-8') as file:
+                text = file.read()
+        except UnicodeDecodeError:
+            with open(input_path, 'r', encoding='latin-1') as file:
+                text = file.read()
+
+        print(f"Original text length: {len(text)} characters")
+        # Skip the first X lines
+        lines = text.split('\n')
+        if hasattr(self, 'skip_lines') and self.skip_lines and len(lines) > self.skip_lines:
+            text = '\n'.join(lines[self.skip_lines:])
+            print(f"Skipped first {self.skip_lines} lines. Remaining text length: {len(text)} characters")
+
+        # Split text into chunks
+        chunks = self.split_text_into_chunks(text, chunk_size=5000)
+        print(f"Split text into {len(chunks)} chunks")
+
+        # Process each chunk
+        chunk_files = []
+        os.makedirs(self.output_dir, exist_ok=True)
+        for i, chunk in enumerate(chunks):
+            if len(chunk.strip()) < 20:
+                print(f"Skipping chunk {i+1}/{len(chunks)}: too short ({len(chunk.strip())} chars)")
+                continue
+            output_path = os.path.join(self.output_dir, f'chunk_{i+1}.wav' if self.__class__.__name__ == 'CoquiTTS' else f'chunk_{i+1}.mp3')
+            print(f"Synthesizing chunk {i+1}/{len(chunks)} to {output_path} ...", flush=True)
+            try:
+                self.synthesize_chunk_to_file(chunk, output_path)
+                print(f"Chunk {i+1}/{len(chunks)} saved to file: {output_path}", flush=True)
+                chunk_files.append(output_path)
+            except Exception as e:
+                print(f"Error processing chunk {i+1}/{len(chunks)}: {e}")
+                print(f"Chunk content (first 100 chars): {chunk[:100]}...")
+                continue
+
+        end_time = time.time()
+        end_dt = datetime.now()
+        duration_hours = (end_time - start_time) / 3600
+        print(f"done at: {end_dt.strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"it took {duration_hours:.4f} hours")
+        print("Text-to-audio conversion completed!")
+        return chunk_files[0] if chunk_files else None
     
     def find_input_file(self, extension='.txt'):
         """
@@ -152,57 +211,8 @@ class CoquiTTS(TextToSpeechConverter):
         self.tts = TTS(model_name).to(self.device)
         print("TTS model loaded successfully!")
     
-    def convert_to_speech(self, input_path):
-        """
-        Convert a text file to speech using Coqui TTS.
-        
-        Args:
-            input_path (str): Path to the text file to convert.
-            
-        Returns:
-            str: Path to the output audio file.
-        """
-        # Read the text file
-        print(f"Reading {input_path}...")
-        with open(input_path, 'r', encoding='utf-8') as f:
-            text = f.read()
-        
-        print(f"Original text length: {len(text)} characters")
-        
-        # Skip the first X lines
-        lines = text.split('\n')
-        if len(lines) > self.skip_lines:
-            text = '\n'.join(lines[self.skip_lines:])
-            print(f"Skipped first {self.skip_lines} lines. Remaining text length: {len(text)} characters")
-        
-        # Split text into chunks
-        chunks = self.split_text_into_chunks(text, chunk_size=5000)
-        print(f"Split text into {len(chunks)} chunks")
-        
-        # Process each chunk
-        chunk_files = []
-        for i, chunk in enumerate(chunks):
-            # Skip very short chunks that might cause issues
-            if len(chunk.strip()) < 20:
-                print(f"Skipping chunk {i+1}/{len(chunks)}: too short ({len(chunk.strip())} chars)")
-                continue
-                
-            output_path = os.path.join(self.output_dir, f'chunk_{i+1}.wav')
-            print(f"Synthesizing chunk {i+1}/{len(chunks)} to {output_path} ...", flush=True)
-            
-            try:
-                self.tts.tts_to_file(text=chunk, file_path=output_path)
-                print(f"Chunk {i+1}/{len(chunks)} saved to file: {output_path}", flush=True)
-                chunk_files.append(output_path)
-            except Exception as e:
-                print(f"Error processing chunk {i+1}/{len(chunks)}: {e}")
-                print(f"Chunk content (first 100 chars): {chunk[:100]}...")
-                continue
-        
-        print("Text-to-audio conversion completed!")
-        
-        # Return the path to the first chunk file (or None if no chunks were created)
-        return chunk_files[0] if chunk_files else None
+    def synthesize_chunk_to_file(self, chunk, output_path):
+        self.tts.tts_to_file(text=chunk, file_path=output_path)
     
     def convert_first_text_file(self):
         """
@@ -213,3 +223,17 @@ class CoquiTTS(TextToSpeechConverter):
         """
         text_path = self.find_input_file('.txt')
         return self.convert_to_speech(text_path) 
+
+
+class GTTS(TextToSpeechConverter):
+    """
+    Concrete class for converting text to speech using Google Text-to-Speech (gTTS).
+    """
+    def __init__(self, input_dir=None, output_dir=None, language="it"):
+        super().__init__(input_dir, output_dir)
+        self.language = language
+    
+    def synthesize_chunk_to_file(self, chunk, output_path):
+        tts = gTTS(chunk, lang=self.language)
+        tts.save(output_path)
+        time.sleep(2) 
