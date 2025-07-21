@@ -1,0 +1,4 @@
+language: it
+input_file_type: PDF
+skip_lines: 0
+target_duration_minutes: 30 

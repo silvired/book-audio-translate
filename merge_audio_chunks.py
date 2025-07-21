@@ -48,17 +48,25 @@ class MergeAudioChunks:
         # Create output directory if it doesn't exist
         os.makedirs(self.output_dir, exist_ok=True)
         
-        # Find all .wav files in the input directory
+        # Find all .wav or .mp3 files in the input directory
         wav_files = glob.glob(os.path.join(self.input_dir, "*.wav"))
-        
-        if not wav_files:
-            print(f"No .wav files found in {self.input_dir}")
+        mp3_files = glob.glob(os.path.join(self.input_dir, "*.mp3"))
+        if wav_files:
+            audio_files = wav_files
+            output_ext = '.wav'
+            audio_format = 'wav'
+        elif mp3_files:
+            audio_files = mp3_files
+            output_ext = '.mp3'
+            audio_format = 'mp3'
+        else:
+            print(f"No .wav or .mp3 files found in {self.input_dir}")
             return 0
         
         # Sort files naturally (chunk_1.wav, chunk_2.wav, ..., chunk_10.wav, etc.)
-        wav_files.sort(key=self.natural_sort_key)
+        audio_files.sort(key=self.natural_sort_key)
         
-        print(f"Found {len(wav_files)} audio files")
+        print(f"Found {len(audio_files)} audio files")
         print(f"Target duration per merged file: {self.target_duration_minutes} minutes")
         
         # Convert target duration to milliseconds
@@ -69,13 +77,13 @@ class MergeAudioChunks:
         file_counter = 1
         files_in_current_merge = []
         
-        for i, wav_file in enumerate(wav_files):
-            print(f"Processing {os.path.basename(wav_file)} ({i+1}/{len(wav_files)})...")
+        for i, audio_file in enumerate(audio_files):
+            print(f"Processing {os.path.basename(audio_file)} ({i+1}/{len(audio_files)})...")
             
             try:
                 # Load the audio file
-                audio = AudioSegment.from_wav(wav_file)
-                files_in_current_merge.append(os.path.basename(wav_file))
+                audio = AudioSegment.from_file(audio_file, format=audio_format)
+                files_in_current_merge.append(os.path.basename(audio_file))
                 
                 # Add to current merged audio
                 current_merged_audio += audio
@@ -84,14 +92,14 @@ class MergeAudioChunks:
                 # Check if we've reached or exceeded the target duration
                 if current_duration >= target_duration_ms:
                     # Save the current merged file
-                    output_filename = f"merged_part_{file_counter:03d}.wav"
+                    output_filename = f"merged_part_{file_counter:03d}{output_ext}"
                     output_path = os.path.join(self.output_dir, output_filename)
                     
                     print(f"Saving merged file {file_counter}: {output_filename}")
                     print(f"  Duration: {self.get_audio_duration(current_merged_audio):.2f} minutes")
                     print(f"  Contains files: {', '.join(files_in_current_merge)}")
                     
-                    current_merged_audio.export(output_path, format="wav")
+                    current_merged_audio.export(output_path, format=audio_format)
                     
                     # Reset for next merge
                     current_merged_audio = AudioSegment.empty()
@@ -100,19 +108,19 @@ class MergeAudioChunks:
                     files_in_current_merge = []
                     
             except Exception as e:
-                print(f"Error processing {wav_file}: {e}")
+                print(f"Error processing {audio_file}: {e}")
                 continue
         
         # Save any remaining audio
         if current_duration > 0:
-            output_filename = f"merged_part_{file_counter:03d}.wav"
+            output_filename = f"merged_part_{file_counter:03d}{output_ext}"
             output_path = os.path.join(self.output_dir, output_filename)
             
             print(f"Saving final merged file {file_counter}: {output_filename}")
             print(f"  Duration: {self.get_audio_duration(current_merged_audio):.2f} minutes")
             print(f"  Contains files: {', '.join(files_in_current_merge)}")
             
-            current_merged_audio.export(output_path, format="wav")
+            current_merged_audio.export(output_path, format=audio_format)
         
         print(f"\nMerge completed! {file_counter} merged files created in '{self.output_dir}' directory")
         return file_counter
