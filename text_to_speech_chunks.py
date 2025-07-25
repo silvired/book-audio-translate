@@ -203,7 +203,7 @@ class CoquiTTS(TextToSpeechConverter):
         self.language_model_dict = {
             "en": "tts_models/en/ljspeech/fast_pitch",
             "it": "tts_models/it/mai_female/glow-tts",  # best one in italian but it's a bit robotic
-            "es": "tts_models/es/mai_female/vits",  # Spanish female voice (if available)
+            "es": "tts_models/es/css10/vits",  # Spanish CSS10 model
         }
         
         # Set device
