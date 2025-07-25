@@ -92,6 +92,10 @@ class TextToSpeechConverter(ABC):
                 self.synthesize_chunk_to_file(chunk, output_path)
                 print(f"Chunk {i+1}/{len(chunks)} saved to file: {output_path}", flush=True)
                 chunk_files.append(output_path)
+                # Wait 10 minutes after every 10 chunks (for GTTS)
+                if self.__class__.__name__ == 'GTTS' and (i+1) % 10 == 0 and i+1 < len(chunks):
+                    print(f"Waiting 10 minutes after processing {i+1} chunks...")
+                    time.sleep(600)
             except Exception as e:
                 print(f"Error processing chunk {i+1}/{len(chunks)}: {e}")
                 print(f"Chunk content (first 100 chars): {chunk[:100]}...")
@@ -236,4 +240,4 @@ class GTTS(TextToSpeechConverter):
     def synthesize_chunk_to_file(self, chunk, output_path):
         tts = gTTS(chunk, lang=self.language)
         tts.save(output_path)
-        time.sleep(2) 
+        time.sleep(5) 

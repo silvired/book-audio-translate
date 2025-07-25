@@ -5,6 +5,8 @@ import yaml
 from book_to_text import PDFToText
 from text_to_speech_chunks import CoquiTTS, GTTS
 from merge_audio_chunks import MergeAudioChunks
+import time
+from datetime import datetime
 
 def run_step(description, command, capture_output=False):
     print(f"\n=== {description} ===")
@@ -24,6 +26,11 @@ def read_config(config_path="config.yaml"):
         return yaml.safe_load(f)
 
 if __name__ == "__main__":
+    # Start timing the entire pipeline
+    pipeline_start_time = time.time()
+    pipeline_start_dt = datetime.now()
+    print(f"Pipeline started at: {pipeline_start_dt.strftime('%Y-%m-%d %H:%M:%S')}")
+    
     # Step 0: Read configuration
     config = read_config()
     language = config.get('language', 'en')
@@ -112,5 +119,12 @@ if __name__ == "__main__":
         if os.path.exists(pycache_dir):
             shutil.rmtree(pycache_dir)
             print(f"Deleted: {pycache_dir}")
+    
+    # End timing and print pipeline duration
+    pipeline_end_time = time.time()
+    pipeline_end_dt = datetime.now()
+    pipeline_duration_hours = (pipeline_end_time - pipeline_start_time) / 3600
+    print(f"\nPipeline ended at: {pipeline_end_dt.strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Total pipeline duration: {pipeline_duration_hours:.4f} hours")
     print("\nAll steps completed successfully!")
     print("Pipeline completed: PDF → Text → Audio Chunks → Merged Audio Files → Cleanup") 
