@@ -72,8 +72,15 @@ ebook to audio/
 ## Supported Languages
 
 - **English** (default): `tts_models/en/ljspeech/fast_pitch`
-- **Italian**: Change `language = "it"` in `convert text to audio/text_to_audio_v2.py`
-- **Spanish**: Change `language = "es"` in `convert text to audio/text_to_audio_v2.py`
+- **Italian**: Uses Google TTS (gTTS) for Italian
+- **Spanish**: `tts_models/es/css10/vits` (Coqui TTS)
+
+To change the language, edit the `language` field in `config.yaml`:
+```yaml
+language: es  # for Spanish
+language: it  # for Italian  
+language: en  # for English
+```
 
 ## Output
 
@@ -91,12 +98,10 @@ ebook to audio/
 
 ## Customization
 
-- **Change language**: Edit the `language` variable in `convert text to audio/text_to_audio_v2.py`.
-- **Change chunk size**: Edit the `chunk_size` parameter in `split_text_into_chunks()` in `text_to_audio_v2.py`.
-- **Change merged audio duration**: Run `merge_audio_chunks.py` with the `--duration` argument (in minutes):
-  ```bash
-  python merge_audio_chunks.py --duration 20
-  ```
+- **Change language**: Edit the `language` field in `config.yaml`
+- **Change chunk size**: Edit the `chunk_size` parameter in `split_text_into_chunks()` in `text_to_speech_chunks.py`
+- **Change merged audio duration**: Edit the `target_duration_minutes` field in `config.yaml`
+- **Skip lines**: Edit the `skip_lines` field in `config.yaml` to skip header lines
 
 ## Requirements
 

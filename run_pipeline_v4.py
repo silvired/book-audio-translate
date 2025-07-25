@@ -72,6 +72,8 @@ if __name__ == "__main__":
         elif language == 'it':
             tts_converter = GTTS(language=language)
             tts_converter.skip_lines = skip_lines
+        elif language == 'es':
+            tts_converter = CoquiTTS(language=language, skip_lines=skip_lines)
         else:
             print(f"Language '{language}' is not supported yet for TTS.")
             sys.exit(1)
@@ -99,7 +101,7 @@ if __name__ == "__main__":
     audio_output_dir = "audio_output"
     if os.path.exists(audio_output_dir):
         for file in os.listdir(audio_output_dir):
-            if file.endswith('.wav'):
+            if file.endswith('.wav') or file.endswith('.mp3'):
                 file_path = os.path.join(audio_output_dir, file)
                 os.remove(file_path)
                 print(f"Deleted: {file}")
