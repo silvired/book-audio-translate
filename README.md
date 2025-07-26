@@ -4,39 +4,36 @@ This project converts PDF ebooks to high-quality audio files using advanced Text
 
 ## Quick Start (Recommended)
 
-### 1. Install dependencies
+### 1. Run the pipeline
 ```bash
-pip install -r requirements.txt
+./run_pipeline.sh
 ```
 
 ### 2. Place your PDF file
 - Put your PDF(s) in the `input_book/` folder.
 
-### 3. Run the pipeline
-```bash
-./run_pipeline.sh
-```
-- The script will:
-  - Detect and use the best available Python version (3.10+ required)
-  - Install all required dependencies automatically
-  - Run the full object-oriented pipeline:
-    - Convert the first PDF in `input_book/` to text using `PDFToText` class
-    - Convert the text to audio chunks using `CoquiTTS` class
-    - Merge audio chunks into ~30-minute `.wav` files using `MergeAudioChunks` class
-    - Clean up temporary files and `__pycache__` folders
+### 3. The script will automatically:
+- Detect and use the best available Python version (3.10+ required)
+- Install all required dependencies automatically
+- Run the full object-oriented pipeline:
+  - Convert the first PDF in `input_book/` to text using `PDFToText` class
+  - Convert the text to audio chunks using `CoquiTTS` class
+  - Merge audio chunks into ~30-minute `.wav` files using `MergeAudioChunks` class
+  - Clean up temporary files and `__pycache__` folders
 
 ## Manual Usage
 
 If you prefer to run manually:
 
-1. **Install dependencies**:
+1. **Run the pipeline**:
    ```bash
-   pip install -r requirements.txt
+   ./run_pipeline.sh
    ```
-2. **Run the pipeline**:
-   ```bash
-   python run_pipeline_v4.py
-   ```
+   
+   The shell script automatically:
+   - Detects the best Python version (3.10+ required)
+   - Installs all required dependencies
+   - Runs the full pipeline
 
 ## Setup Verification
 
