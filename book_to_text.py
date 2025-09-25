@@ -114,8 +114,58 @@ class PDFToText(BookToText):
                 for page in reader.pages:
                     text = page.extract_text()
                     if text:
-                        out.write(text)
-                        out.write("\n\n")
+                        # Try to preserve paragraph structure by looking for multiple newlines
+                        # and indentation patterns in the original text
+                        import re
+                        
+                        # First, let's see what the raw text looks like
+                        # Don't normalize all whitespace yet - preserve some structure
+                        text = text.strip()
+                        
+                        # Look for patterns that might indicate paragraph breaks:
+                        # 1. Multiple consecutive newlines
+                        # 2. Lines that start with spaces (indentation)
+                        # 3. Preserve some original spacing
+                        
+                        # Split by multiple newlines to find paragraph boundaries
+                        paragraphs = re.split(r'\n\s*\n', text)
+                        
+                        # If no clear paragraph breaks found, try splitting by single newlines
+                        if len(paragraphs) == 1:
+                            # Look for lines that might be paragraph starts (indented or after periods)
+                            lines = text.split('\n')
+                            paragraphs = []
+                            current_paragraph = []
+                            
+                            for line in lines:
+                                line = line.strip()
+                                if not line:
+                                    if current_paragraph:
+                                        paragraphs.append(' '.join(current_paragraph))
+                                        current_paragraph = []
+                                    continue
+                                
+                                # Check if this line starts a new paragraph
+                                # (starts with capital letter after a period, or is indented)
+                                if (current_paragraph and 
+                                    (line[0].isupper() and 
+                                     any(current_paragraph[-1].endswith(p) for p in ['.', '!', '?']))):
+                                    # Start new paragraph
+                                    paragraphs.append(' '.join(current_paragraph))
+                                    current_paragraph = [line]
+                                else:
+                                    current_paragraph.append(line)
+                            
+                            if current_paragraph:
+                                paragraphs.append(' '.join(current_paragraph))
+                        
+                        # Write each paragraph with proper spacing
+                        for paragraph in paragraphs:
+                            if paragraph.strip():
+                                # Normalize whitespace within paragraphs
+                                paragraph = re.sub(r'\s+', ' ', paragraph.strip())
+                                out.write(paragraph)
+                                out.write("\n\n")
         
         return output_path
     
@@ -127,4 +177,26 @@ class PDFToText(BookToText):
             str: Path to the output text file.
         """
         pdf_path = self.find_input_file('.pdf')
-        return self.convert_to_text(pdf_path) 
+        return self.convert_to_text(pdf_path)
+
+
+if __name__ == "__main__":
+    """
+    Main execution block to convert PDF to text.
+    """
+    try:
+        # Create PDF to text converter
+        converter = PDFToText()
+        
+        # Find and convert the first PDF file
+        print("Looking for PDF files in input directory...")
+        output_path = converter.convert_first_pdf()
+        
+        print(f"Successfully converted PDF to text!")
+        print(f"Output saved to: {output_path}")
+        
+    except FileNotFoundError as e:
+        print(f"Error: {e}")
+        print("Please make sure you have a PDF file in the 'input_book' directory.")
+    except Exception as e:
+        print(f"An error occurred: {e}") 
