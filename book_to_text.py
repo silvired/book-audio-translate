@@ -162,12 +162,55 @@ class PDFToText(BookToText):
                         # Write each paragraph with proper spacing
                         for paragraph in paragraphs:
                             if paragraph.strip():
+                                # Process different types of dashes before normalizing whitespace
+                                paragraph = self._process_dashes(paragraph)
                                 # Normalize whitespace within paragraphs
                                 paragraph = re.sub(r'\s+', ' ', paragraph.strip())
                                 out.write(paragraph)
                                 out.write("\n\n")
         
         return output_path
+    
+    def _process_dashes(self, text):
+        """
+        Process different types of dashes to add proper spacing.
+        
+        Args:
+            text (str): Input text to process.
+            
+        Returns:
+            str: Text with proper dash spacing.
+        """
+        import re
+        
+        # Handle em dashes (—) - these should have spaces around them for punctuation
+        # Look for em dashes that are used for punctuation (not in compound words)
+        text = re.sub(r'([a-zA-Z])(—)([a-zA-Z])', r'\1 — \3', text)
+        
+        # Handle cases where em dash is at the beginning or end of a word
+        text = re.sub(r'([a-zA-Z])(—)(\s)', r'\1 —\3', text)
+        text = re.sub(r'(\s)(—)([a-zA-Z])', r'\1— \3', text)
+        
+        # Handle en dashes (–) - these are also typically used for punctuation
+        text = re.sub(r'([a-zA-Z])(–)([a-zA-Z])', r'\1 – \3', text)
+        text = re.sub(r'([a-zA-Z])(–)(\s)', r'\1 –\3', text)
+        text = re.sub(r'(\s)(–)([a-zA-Z])', r'\1– \3', text)
+        
+        # Handle regular hyphens (-) - these should remain connected for compound words
+        # Only add spaces if the hyphen is clearly used for punctuation
+        # This is more complex as we need to distinguish compound words from punctuation
+        
+        # Pattern 1: Hyphen used for punctuation (space before and after)
+        # Look for patterns like "word - word" or "word- word" or "word -word"
+        text = re.sub(r'(\s)(-)(\s)', r' — ', text)  # Convert spaced hyphens to em dashes
+        text = re.sub(r'(\s)(-)([a-zA-Z])', r' — \3', text)  # space before, no space after
+        text = re.sub(r'([a-zA-Z])(-)(\s)', r'\1 — ', text)  # no space before, space after
+        
+        # Pattern 2: Hyphen used for compound words (no spaces)
+        # These should remain as regular hyphens and stay connected
+        # Examples: "grade-schooler", "well-known", "twenty-one"
+        
+        return text
     
     def convert_first_pdf(self):
         """
