@@ -1,0 +1,13 @@
+{
+    "gemini-2.5-flash": "gemini",
+    "gemini-2.5-flash-preview-09-2025": "gemini",
+    "gemini-2.5-flash-lite": "gemini",
+    "gemini-2.5-flash-lite-preview-09-2025": "gemini",
+    "gemini-2.0-flash": "gemini",
+    "gemini-2.0-flash-lite": "gemini",
+    "qwen-mt-turbo": "alibaba",
+    "gpt-4o-mini": "openai",
+    "gpt-4.1-nano": "openai",
+    "deepseek-chat": "deepseek",
+    "deepseek-reasoner": "deepseek"
+}

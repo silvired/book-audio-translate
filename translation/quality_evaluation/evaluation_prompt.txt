@@ -1,0 +1,31 @@
+You are a professional translator who evaluates a translation from English to Italian.
+
+The original English text is:
+[original]
+
+Evaluate the following translation for correctness and quality against the given original text:
+[translation]
+
+Provide scores on a scale between 1 to 5 for the following criteria:
+
+- **Accuracy (Fidelity to Source)**
+    - The translation should convey the exact meaning of the source text without adding, omitting, or distorting information. This includes proper handling of technical terms, numbers, names, and factual details. Accuracy is about *what* is said.
+- **Fluency (Readability in Target Language)**
+    - The text must read naturally in the target language, as if originally written in it. Grammar, syntax, and vocabulary should be appropriate and consistent with the target language norms. Fluency ensures that the translation is *smooth and understandable* to the target audience.
+- **Cultural and Contextual Appropriateness**
+    - The translation should adapt idioms, metaphors, references, and cultural elements to resonate with the target audience. Literal translations that ignore cultural differences can cause confusion or misinterpretation. This criterion checks if the translation feels *contextually relevant* in the target culture.
+- **Terminology and Consistency**
+    - Especially in technical, legal, or business texts, consistent use of terminology is essential. The translator must adhere to glossaries, style guides, or domain-specific vocabulary. Inconsistent terms undermine clarity and professional quality.
+- **Style and Register**
+    - The tone, style, and level of formality should match the source text and the purpose of the translation. For example, a marketing text should remain persuasive, while a scientific article should maintain objectivity and precision. Style and register ensure the translation *serves the same function* as the original.
+
+Please provide your response ONLY as a valid JSON object with no additional text or explanation. 
+Include one field for each of the five criteria listed above, with a score as a number between 1-5 for each criterion.
+Example format:
+{
+  "Accuracy": 4.5,
+  "Fluency": 4.0,
+  "Cultural and Contextual Appropriateness": 3.5,
+  "Terminology and Consistency": 4.0,
+  "Style and Register": 4.5
+}

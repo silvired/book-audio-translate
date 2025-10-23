@@ -1,4 +1,4 @@
-language: en
+language: it
 input_file_type: PDF
 skip_lines: 15
 target_duration_minutes: 30
