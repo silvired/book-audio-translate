@@ -1,0 +1,21 @@
+# Book Translation Pipeline Configuration
+
+# Language Settings
+source_language: "English"
+target_language: "Italian"
+
+# Model Settings
+model_name: "gemini-2.5-flash"
+
+# File Processing Settings
+input_file_type: "auto"  # auto, PDF, EPUB
+skip_lines: 15
+target_duration_minutes: 30
+
+# Translation Settings
+thinking_enabled: -1  # -1 for unlimited, 0 for disabled, or specific number
+max_retries: 2
+retry_delay_seconds: 10
+
+# Output Settings
+output_formats: ["txt", "pdf"]  # txt, pdf, or both

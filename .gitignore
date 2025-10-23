@@ -1,9 +1,57 @@
-# Ignore contents of old_versions, example input, and merged_audio_output, but keep the folders
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Audio Generation Module
+audio generation/__pycache__/
+audio generation/*.pyc
+audio generation/merged_audio_output/*
+!audio generation/merged_audio_output/.gitkeep
+
+# Translation Module
+translation/__pycache__/
+translation/*.pyc
+translation/segmented_text/*
+!translation/segmented_text/.gitkeep
+translation/translated_text/*
+!translation/translated_text/.gitkeep
+translation/pdf_output/*
+!translation/pdf_output/.gitkeep
+
+# Root Level Output Folders
+example input/*
+!example input/.gitkeep
+input_book/*
+!input_book/.gitkeep
+text_output/*
+!text_output/.gitkeep
+translated_text/*
+!translated_text/.gitkeep
 old_versions/*
 !old_versions/.gitkeep
 
-example input/*
-!example input/.gitkeep
+# Free translation attempt (old code)
+free_translation attempt/*
+!free_translation attempt/.gitkeep
 
-merged_audio_output/*
-!merged_audio_output/.gitkeep 
+# Environment and Config
+.env
+*.json.local 

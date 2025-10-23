@@ -1,0 +1,13 @@
+model_name,Accuracy,Cultural and Contextual Appropriateness,Fluency,Style and Register,Terminology and Consistency
+deepseek-v3,5.0,5.0,4.5,5.0,5.0
+gemini-2.0-flash-lite,4.8,4.9,4.7,4.8,4.8
+gemini-2.0-flash,4.8,4.6,4.7,4.7,4.8
+gemini-2.5-flash-lite-preview-09-2025,4.5,4.5,4.5,4.5,4.5
+gemini-2.5-flash-lite,4.8,4.9,4.7,4.8,4.8
+gemini-2.5-flash-preview-09-2025,4.8,4.8,4.7,4.7,4.8
+gemini-2.5-flash,5.0,5.0,5.0,5.0,5.0
+gpt-4.1-nano,4.5,4.7,4.8,4.7,4.6
+gpt-4o-mini,4.8,4.8,4.7,4.8,4.9
+qwen-mt-turbo,4.5,4.5,4.5,4.5,4.5
+Gemini-2.5-flash_no_thinking,4.8,4.8,4.7,4.7,4.8
+deepseek-v3_with_thinking_translated.txt,4.8,4.9,4.7,4.8,4.8

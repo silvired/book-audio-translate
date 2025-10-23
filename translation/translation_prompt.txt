@@ -1,0 +1,6 @@
+Translate the following {source_language} text to {target_language}. 
+Maintain the original formatting, style, and tone. 
+Only return the translated text without any additional explanations or notes.
+
+Text to translate:
+{text}

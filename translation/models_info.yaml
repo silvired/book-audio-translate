@@ -1,0 +1,23 @@
+gemini-2.5-flash_no_thinking:
+  model_name: "gemini-2.5-flash"
+  max_output_tokens: 4000
+  # Standard pricing
+  input_price_per_million_tokens: 0.3
+  output_price_per_million_tokens: 2.5
+  thinking_price_per_million_tokens: 0.3
+  # Batch pricing (optional - for model1 only)
+  batch_input_price_per_million_tokens: 0.15
+  batch_output_price_per_million_tokens: 1.25
+  thinking_price_per_million_tokens: 0.15
+  # Model-specific characteristics
+  output_input_token_ratio: 1.22  # Output tokens / Input tokens ratio for this model
+  output_input_token_ratio: 3.6  # thinking tokens / Input tokens ratio for this model
+
+deep-seek-v3-no_thinking:
+  name_name: "deepseek-chat" 
+  max_output_tokens: 4000
+  # Standard pricing
+  input_price_per_million_tokens: 0.28
+  output_price_per_million_tokens: 0.42
+  # Model-specific characteristics  
+  output_input_token_ratio: 1.35  # Output tokens / Input tokens ratio for this model
