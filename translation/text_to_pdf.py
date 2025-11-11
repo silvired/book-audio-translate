@@ -13,7 +13,7 @@ from reportlab.lib.colors import black
 # Configuration Constants
 INPUT_PATH = "translation/translated_text"  # Path to the folder containing translated text files
 OUTPUT_PATH = "translation/pdf_output"  # Path to the folder where PDF will be saved
-FILE_NAME = "The summer children -Hutchison Dot_translated.txt"  # Set to "default" to pick the first file, or specify a filename
+FILE_NAME = "default"  # Set to "default" to pick the first file, or specify a filename
 
 
 class TextToPDFConverter:

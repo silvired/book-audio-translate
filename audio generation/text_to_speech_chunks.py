@@ -3,6 +3,8 @@ import sys
 import torch
 import time
 from abc import ABC, abstractmethod
+from contextlib import redirect_stdout
+from io import StringIO
 from TTS.api import TTS
 
 from gtts import gTTS
@@ -216,7 +218,9 @@ class CoquiTTS(TextToSpeechConverter):
         print("TTS model loaded successfully!")
     
     def synthesize_chunk_to_file(self, chunk, output_path):
-        self.tts.tts_to_file(text=chunk, file_path=output_path)
+        # Suppress stdout to prevent Coqui TTS from printing the text to terminal
+        with redirect_stdout(StringIO()):
+            self.tts.tts_to_file(text=chunk, file_path=output_path)
     
     def convert_first_text_file(self):
         """

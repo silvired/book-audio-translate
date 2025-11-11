@@ -35,6 +35,8 @@ translation/translated_text/*
 !translation/translated_text/.gitkeep
 translation/pdf_output/*
 !translation/pdf_output/.gitkeep
+translation/translated_text/*
+!translation/translated_text/.gitkeep
 
 # Root Level Output Folders
 example input/*
@@ -43,8 +45,6 @@ input_book/*
 !input_book/.gitkeep
 text_output/*
 !text_output/.gitkeep
-translated_text/*
-!translated_text/.gitkeep
 old_versions/*
 !old_versions/.gitkeep
 
