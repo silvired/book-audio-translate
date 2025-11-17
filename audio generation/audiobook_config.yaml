@@ -1,4 +1,3 @@
-language: it
-skip_lines: 0
+language: en
 target_duration_minutes: 30
 test: true

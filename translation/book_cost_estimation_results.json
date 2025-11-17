@@ -1,0 +1,74 @@
+[
+  {
+    "config_name": "Gemini 2.5 Flash - Thinking Enabled - Standard Pricing",
+    "num_chunks": 145,
+    "total_tokens": {
+      "input": 363308,
+      "output": 443164,
+      "thinking": 1307858
+    },
+    "cost_breakdown": {
+      "input_cost": 0.1089924,
+      "output_cost": 1.10791,
+      "thinking_cost": 0.19617869999999998,
+      "total_cost": 1.4130810999999999
+    }
+  },
+  {
+    "config_name": "Gemini 2.5 Flash - Thinking Enabled - Batch Pricing",
+    "num_chunks": 145,
+    "total_tokens": {
+      "input": 363308,
+      "output": 443164,
+      "thinking": 1307858
+    },
+    "cost_breakdown": {
+      "input_cost": 0.0544962,
+      "output_cost": 0.553955,
+      "thinking_cost": 0.19617869999999998,
+      "total_cost": 0.8046298999999999
+    }
+  },
+  {
+    "config_name": "Gemini 2.5 Flash - Thinking Disabled - Standard Pricing",
+    "num_chunks": 145,
+    "total_tokens": {
+      "input": 363308,
+      "output": 443164
+    },
+    "cost_breakdown": {
+      "input_cost": 0.1089924,
+      "output_cost": 1.10791,
+      "thinking_cost": 0.0,
+      "total_cost": 1.2169024
+    }
+  },
+  {
+    "config_name": "Gemini 2.5 Flash - Thinking Disabled - Batch Pricing",
+    "num_chunks": 145,
+    "total_tokens": {
+      "input": 363308,
+      "output": 443164
+    },
+    "cost_breakdown": {
+      "input_cost": 0.0544962,
+      "output_cost": 0.553955,
+      "thinking_cost": 0.0,
+      "total_cost": 0.6084512
+    }
+  },
+  {
+    "config_name": "DeepSeek V3 - Thinking Disabled",
+    "num_chunks": 161,
+    "total_tokens": {
+      "input": 364060,
+      "output": 491406
+    },
+    "cost_breakdown": {
+      "input_cost": 0.10193680000000001,
+      "output_cost": 0.20639052,
+      "thinking_cost": 0.0,
+      "total_cost": 0.30832732
+    }
+  }
+]
