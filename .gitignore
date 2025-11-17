@@ -27,6 +27,7 @@ audio generation/merged_audio_output/*
 !audio generation/merged_audio_output/.gitkeep
 audio generation/audio_output/*
 !audio generation/audio_output/.gitkeep
+audio generation/audiobook_config.yaml
 
 # Translation Module
 translation/__pycache__/
