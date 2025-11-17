@@ -7,21 +7,98 @@ and CostCalculator to estimate costs for various pricing models.
 """
 
 import json
+import shutil
+import sys
+from pathlib import Path
+
 import yaml
 from chunk_mapper import ChunkMapper
 from cost_calculator import CostCalculator
+from sentence_segmenter import SentenceSegmenter
 from token_counter import TokenCounter
 
+# Ensure project root is importable for shared utilities
+SCRIPT_DIR = Path(__file__).parent
+PROJECT_ROOT = SCRIPT_DIR.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from book_to_text import BookToText  # noqa: E402
 
 # ========== FILE PATH CONSTANTS ==========
-from pathlib import Path
+PROMPT_FILE = SCRIPT_DIR / "translation_prompt.txt"
+MODEL_INFO_FILE = SCRIPT_DIR / "models_info.yaml"
 
-# Get the directory where this script is located
-SCRIPT_DIR = Path(__file__).parent
+INPUT_BOOK_DIR = PROJECT_ROOT / "input_book"
+TEXT_OUTPUT_DIR = PROJECT_ROOT / "text_output"
+SEGMENTED_TEXT_DIR = SCRIPT_DIR / "segmented_text"
 
-PROMPT_FILE = "translation_prompt.txt"
-SEGMENTED_BOOK_FILE = "Cujo - Stephen King_segmented.json"
-MODEL_INFO_FILE = "models_info.yaml"
+
+def get_first_input_book_file():
+    """Return the first supported file found in the input_book directory."""
+    if not INPUT_BOOK_DIR.exists():
+        raise FileNotFoundError(f"Input directory not found: {INPUT_BOOK_DIR}")
+    
+    supported_extensions = {".pdf", ".epub", ".txt"}
+    candidate_files = sorted(
+        f for f in INPUT_BOOK_DIR.iterdir()
+        if f.is_file() and f.suffix.lower() in supported_extensions
+    )
+    
+    if not candidate_files:
+        raise FileNotFoundError(
+            f"No supported files (.pdf, .epub, .txt) found in {INPUT_BOOK_DIR}"
+        )
+    
+    return candidate_files[0]
+
+
+def convert_book_to_text(book_path: Path) -> Path:
+    """Convert the detected book file to text (or copy if already .txt)."""
+    TEXT_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    
+    if book_path.suffix.lower() == ".txt":
+        destination = TEXT_OUTPUT_DIR / book_path.name
+        shutil.copy(book_path, destination)
+        return destination
+    
+    converter = BookToText.get_converter_for_file(
+        str(book_path),
+        input_dir=str(INPUT_BOOK_DIR),
+        output_dir=str(TEXT_OUTPUT_DIR)
+    )
+    output_path = Path(converter.convert_to_text(str(book_path)))
+    return output_path
+
+
+def segment_text_file(text_file: Path) -> Path:
+    """Segment a text file into paragraphs/sentences and save JSON."""
+    SEGMENTED_TEXT_DIR.mkdir(parents=True, exist_ok=True)
+    
+    segmenter = SentenceSegmenter(
+        input_dir=str(TEXT_OUTPUT_DIR),
+        output_dir=str(SEGMENTED_TEXT_DIR)
+    )
+    output_path = Path(segmenter.get_output_path(str(text_file)))
+    result = segmenter.segment_text_with_paragraphs(str(text_file), str(output_path))
+    if result is None:
+        raise RuntimeError(f"Failed to segment text file: {text_file}")
+    return output_path
+
+
+def prepare_segmented_book_file() -> Path:
+    """Pipeline: pick first book, convert to text, segment, return JSON path."""
+    print("\nPreparing segmented book from input_book folder...")
+    book_file = get_first_input_book_file()
+    print(f"✓ Found book: {book_file.name}")
+    
+    text_file = convert_book_to_text(book_file)
+    print(f"✓ Converted to text: {text_file}")
+    
+    segmented_file = segment_text_file(text_file)
+    print(f"✓ Segmented text saved to: {segmented_file}")
+    
+    return segmented_file
 
 # Translation languages (modify as needed)
 SOURCE_LANGUAGE = "English"
@@ -157,10 +234,12 @@ def main():
         provider="gemini"
     )
     
+    segmented_book_file = prepare_segmented_book_file()
+    
     print("\nCounting tokens for all paragraphs...")
     # Use the token counter's method to count tokens for the segmented file
     segmented_tokens_data = token_counter.count_tokens_for_segmented_file(
-        file_path=str(SEGMENTED_BOOK_FILE),
+        file_path=str(segmented_book_file),
         output_file_path=None  # Don't save intermediate file
     )
     
