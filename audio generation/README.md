@@ -20,6 +20,13 @@ This folder contains the end-to-end tooling that turns a book file into narrated
 - On Windows, the *Microsoft C++ Build Tools* workload is needed before installing `TTS`. You can obtain it from [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022).
 - A GPU is optional; the pipeline auto-detects CUDA and falls back to CPU.
 
+Initialize virtual environment to support TTS
+
+```bash
+conda create -n tts_env python=3.11 -y
+conda activate tts_env
+```
+
 Install Python dependencies once per environment:
 
 ```bash

@@ -556,8 +556,8 @@ class EpubToText(BookToText):
             '&nbsp;': ' ',
             '&#8211;': '–',  # en dash
             '&#8212;': '—',  # em dash
-            '&#8216;': ''',  # left single quotation mark
-            '&#8217;': ''',  # right single quotation mark
+            '&#8216;': "'",  # left single quotation mark
+            '&#8217;': "'",  # right single quotation mark
             '&#8220;': '"',  # left double quotation mark
             '&#8221;': '"',  # right double quotation mark
         }
