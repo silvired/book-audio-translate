@@ -560,6 +560,7 @@ class EpubToText(BookToText):
             '&#8217;': "'",  # right single quotation mark
             '&#8220;': '"',  # left double quotation mark
             '&#8221;': '"',  # right double quotation mark
+            '&#233;': 'é'
         }
         
         for entity, char in entities.items():

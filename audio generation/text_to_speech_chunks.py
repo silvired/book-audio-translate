@@ -71,11 +71,6 @@ class TextToSpeechConverter(ABC):
                 text = file.read()
 
         print(f"Original text length: {len(text)} characters")
-        # Skip the first X lines
-        lines = text.split('\n')
-        if hasattr(self, 'skip_lines') and self.skip_lines and len(lines) > self.skip_lines:
-            text = '\n'.join(lines[self.skip_lines:])
-            print(f"Skipped first {self.skip_lines} lines. Remaining text length: {len(text)} characters")
 
         # Split text into chunks
         chunks = self.split_text_into_chunks(text, chunk_size=5000)
@@ -99,9 +94,22 @@ class TextToSpeechConverter(ABC):
                     print(f"Waiting 10 minutes after processing {i+1} chunks...")
                     time.sleep(600)
             except Exception as e:
-                print(f"Error processing chunk {i+1}/{len(chunks)}: {e}")
-                print(f"Chunk content (first 100 chars): {chunk[:100]}...")
-                continue
+                msg = str(e)
+                if "PositionalEncoding is limited to" in msg:
+                    print(f"Chunk {i+1} too long for model, splitting into smaller sub‑chunks...")
+                    subchunks = self.split_text_into_chunks(chunk, chunk_size=1000)
+                    for j, sub in enumerate(subchunks):
+                        sub_output_path = os.path.join(
+                            self.output_dir,
+                            f'chunk_{i+1}_part_{j+1}.wav'
+                        )
+                        self.synthesize_chunk_to_file(sub, sub_output_path)
+                        print(f"Sub‑chunk {i+1}.{j+1} saved to {sub_output_path}")
+                    # optionally extend chunk_files with the sub‑chunks
+                else:
+                    print(f"Error processing chunk {i+1}/{len(chunks)}: {e}")
+                    print(f"Chunk content (first 100 chars): {chunk[:100]}...")
+                    continue
 
         end_time = time.time()
         end_dt = datetime.now()
@@ -187,7 +195,7 @@ class CoquiTTS(TextToSpeechConverter):
     Concrete class for converting text to speech using Coqui TTS.
     """
     
-    def __init__(self, input_dir=None, output_dir=None, language="en", skip_lines=111):
+    def __init__(self, input_dir=None, output_dir=None, language="en"):
         """
         Initialize Coqui TTS converter.
         
@@ -195,11 +203,9 @@ class CoquiTTS(TextToSpeechConverter):
             input_dir (str): Directory containing text files. If None, uses 'text_output'.
             output_dir (str): Directory for output audio files. If None, uses 'audio_output'.
             language (str): Language code for TTS model.
-            skip_lines (int): Number of lines to skip at the start of the text.
         """
         super().__init__(input_dir, output_dir)
         self.language = language
-        self.skip_lines = skip_lines
         
         # Language model dictionary
         self.language_model_dict = {
