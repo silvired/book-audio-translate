@@ -34,7 +34,7 @@ class MergeAudioChunks:
     Class to merge audio chunks into larger files of specified duration.
     """
     
-    def __init__(self, target_duration_minutes=30, input_dir="audio_output", output_dir="merged_audio_output"):
+    def __init__(self, target_duration_minutes=30, input_dir="audio generation/audio_output", output_dir="audio generation/merged_audio_output"):
         """
         Initialize the audio chunk merger.
         

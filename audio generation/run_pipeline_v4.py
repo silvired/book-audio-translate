@@ -53,7 +53,6 @@ if __name__ == "__main__":
     # Step 0: Read configuration
     config = read_config()
     language = config.get('language', 'en')
-    skip_lines = config.get('skip_lines', 111)
     target_duration_minutes = config.get('target_duration_minutes', 30)
     test_mode = config.get('test', False)
 
@@ -131,12 +130,11 @@ if __name__ == "__main__":
     print("\n=== Converting text to audio using selected TextToSpeechConverter class ===")
     try:
         if language == 'en':
-            tts_converter = CoquiTTS(skip_lines=skip_lines)
+            tts_converter = CoquiTTS(language=language)
         elif language == 'it':
             tts_converter = GTTS(language=language)
-            tts_converter.skip_lines = skip_lines
         elif language == 'es':
-            tts_converter = CoquiTTS(language=language, skip_lines=skip_lines)
+            tts_converter = CoquiTTS(language=language)
         else:
             print(f"Language '{language}' is not supported yet for TTS.")
             sys.exit(1)
