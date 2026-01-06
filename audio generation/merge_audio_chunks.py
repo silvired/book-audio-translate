@@ -46,6 +46,7 @@ class MergeAudioChunks:
         self.target_duration_minutes = target_duration_minutes
         self.input_dir = input_dir
         self.output_dir = output_dir
+        self.book_title = os.listdir('input_book')[0].split('.')[0]
         
         # Suppress FFmpeg output at OS level
         os.environ['FFREPORT'] = 'file='
@@ -154,7 +155,7 @@ class MergeAudioChunks:
                 # Check if we've reached or exceeded the target duration
                 if current_duration >= target_duration_ms:
                     # Save the current merged file
-                    output_filename = f"merged_part_{file_counter:03d}.wav"
+                    output_filename = f"{self.book_title}_{file_counter:03d}.wav"
                     output_path = os.path.join(self.output_dir, output_filename)
                     
                     print(f"Saving merged file {file_counter}: {output_filename}")
@@ -175,7 +176,7 @@ class MergeAudioChunks:
         
         # Save any remaining audio
         if current_duration > 0:
-            output_filename = f"merged_part_{file_counter:03d}.wav"
+            output_filename = f"{self.book_title}_{file_counter:03d}.wav"
             output_path = os.path.join(self.output_dir, output_filename)
             
             print(f"Saving final merged file {file_counter}: {output_filename}")

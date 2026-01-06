@@ -94,22 +94,52 @@ class TextToSpeechConverter(ABC):
                     print(f"Waiting 10 minutes after processing {i+1} chunks...")
                     time.sleep(600)
             except Exception as e:
-                msg = str(e)
-                if "PositionalEncoding is limited to" in msg:
-                    print(f"Chunk {i+1} too long for model, splitting into smaller sub‑chunks...")
-                    subchunks = self.split_text_into_chunks(chunk, chunk_size=1000)
-                    for j, sub in enumerate(subchunks):
-                        sub_output_path = os.path.join(
-                            self.output_dir,
-                            f'chunk_{i+1}_part_{j+1}.wav'
-                        )
+                print(f"Error processing chunk {i+1}/{len(chunks)}: {e}")
+                subchunks = self.split_text_into_chunks(chunk, chunk_size=1000)
+                for j, sub in enumerate(subchunks):
+                    sub_output_path = os.path.join(
+                        self.output_dir,
+                        f'chunk_{i+1}_part_{j+1}.wav'
+                    )
+                    try:
                         self.synthesize_chunk_to_file(sub, sub_output_path)
                         print(f"Sub‑chunk {i+1}.{j+1} saved to {sub_output_path}")
-                    # optionally extend chunk_files with the sub‑chunks
-                else:
-                    print(f"Error processing chunk {i+1}/{len(chunks)}: {e}")
-                    print(f"Chunk content (first 100 chars): {chunk[:100]}...")
-                    continue
+                        # optionally extend chunk_files with the sub‑chunks
+                    except Exception as e:
+                        print(f"Error processing chunk {i+1}_{j+1}/{len(chunks)}: {e}")
+                        subsubchunks = self.split_text_into_chunks(sub, chunk_size=500)
+                        for k, subsub in enumerate(subsubchunks):
+                            subsub_output_path = os.path.join(
+                                self.output_dir,
+                                f'chunk_{i+1}_part_{j+1}_part_{k+1}.wav'
+                            )
+                            try:
+                                self.synthesize_chunk_to_file(subsub, subsub_output_path)
+                                print(f"Sub‑sub‑chunk {i+1}.{j+1}.{k+1} saved to {subsub_output_path}")
+                            except Exception as e:
+                                print(f"Error processing chunk {i+1}_{j+1}_{k+1}/{len(chunks)}: {e}")
+                                
+                                subsubsubchunks = self.split_text_into_chunks(subsub, chunk_size=250)
+                                for l, subsubsub in enumerate(subsubsubchunks):
+                                    subsubsub_output_path = os.path.join(
+                                        self.output_dir,
+                                        f'chunk_{i+1}_part_{j+1}_part_{k+1}_part_{l+1}.wav'
+                                    )
+                                
+                                    try:
+                                        self.synthesize_chunk_to_file(subsubsub, subsubsub_output_path)
+                                        print(f"Sub‑sub‑sub‑chunk {i+1}.{j+1}.{k+1}.{l+1} saved to {subsubsub_output_path}")
+                                    except Exception as e:
+                                        print(f"Error processing chunk {i+1}_{j+1}_{k+1}_{l+1}/{len(chunks)}: {e}")
+                                        print(f"\n===== DEBUG CHUNK {i+1}_{j+1}_{k+1}_{l+1} =====")
+                                        print(f"Length: {len(chunk)}")
+                                        print(repr(chunk))  
+                                        print("===== END DEBUG =====\n")
+
+                                        break
+
+
+
 
         end_time = time.time()
         end_dt = datetime.now()
