@@ -33,6 +33,17 @@ class BookToText(ABC):
         self.input_dir = input_dir
         self.output_dir = output_dir
     
+    #common text cleaning hook
+    @staticmethod
+    def clean_text(text: str) -> str:
+        """
+        Common text cleaning for all converters.
+
+        For now:
+        - Replace '.?' with '?' to avoid problematic punctuation patterns.
+        """
+        return text.replace(".?", "?")
+
     @abstractmethod
     def convert_to_text(self, file_path):
         """
@@ -269,8 +280,11 @@ class PDFToText(BookToText):
                                 paragraph = self._process_dashes(paragraph)
                                 # Normalize whitespace within paragraphs
                                 paragraph = re.sub(r'\s+', ' ', paragraph.strip())
+                                # Apply common cleaning
+                                paragraph = BookToText.clean_text(paragraph)
                                 out.write(paragraph)
                                 out.write("\n\n")
+
         
         return output_path
     
@@ -571,34 +585,29 @@ class EpubToText(BookToText):
     def _clean_epub_text(self, text):
         """
         Clean and format the extracted EPUB text while preserving paragraph structure.
-        
-        Args:
-            text (str): Raw extracted text.
-            
-        Returns:
-            str: Cleaned text with proper paragraph spacing.
         """
-        # Split into paragraphs first to preserve structure
         paragraphs = text.split('\n\n')
         cleaned_paragraphs = []
-        
+
         for paragraph in paragraphs:
             paragraph = paragraph.strip()
             if not paragraph:
                 continue
-                
+
             # Process dashes within each paragraph
             paragraph = self._process_dashes(paragraph)
-            
+
             # Normalize whitespace within paragraphs (but preserve paragraph breaks)
             paragraph = re.sub(r'[ \t]+', ' ', paragraph)
             paragraph = paragraph.strip()
-            
+
             if paragraph:
+                # Apply common cleaning
+                paragraph = BookToText.clean_text(paragraph)
                 cleaned_paragraphs.append(paragraph)
-        
-        # Join paragraphs with double newlines (empty line between paragraphs)
+
         return '\n\n'.join(cleaned_paragraphs)
+
     
     def _process_dashes(self, text):
         """
