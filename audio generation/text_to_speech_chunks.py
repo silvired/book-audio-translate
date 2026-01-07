@@ -9,6 +9,7 @@ from TTS.api import TTS
 
 from gtts import gTTS
 
+skip_chunk_message = "Sorry. Sorry. Sorry. This sub-chunk has been skipped. 250 charachters are missing from this audio."
 
 class TextToSpeechConverter(ABC):
     """
@@ -135,8 +136,15 @@ class TextToSpeechConverter(ABC):
                                         print(f"Length: {len(chunk)}")
                                         print(repr(chunk))  
                                         print("===== END DEBUG =====\n")
+                                        print()
+                                        print("using skip chunk message instead")
+                                        error_output_path = os.path.join(
+                                            self.output_dir,
+                                            f'chunk_{i+1}_part_{j+1}_part_{k+1}_part_{l+1}_error.wav'
+                                        )
+                                        self.synthesize_chunk_to_file(skip_chunk_message, error_output_path)
 
-                                        break
+
 
 
 
