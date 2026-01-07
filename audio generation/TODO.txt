@@ -1,8 +1,8 @@
 [ 1 ]
-remove skip lines logic. Fai partire dalla prima frase del primo capitolo. 
-Cosi puoi aprire il pdf guardare la struttura e dare come input la prima frase del libro. 
-Il tutto deve essere comparato in minuscolo per evitare problemi.
+update the pdf/epub so they have written chunk number
 [ 2 ]
 adjust speed from config file
 [ 3 ]
 update readme, it should suggest to go to open library to download pdf
+[ 4 ]
+made the english audio voice to pause more firmly when there are punctuations.
