@@ -61,17 +61,11 @@ The pipeline performs the following stages:
 5. **Merge** – combines chunks into ~`target_duration_minutes` files stored in `merged_audio_output/`.
 6. **Cleanup** – deletes temporary text/audio files unless `test: true`.
 
-### Alternative launchers
-
-- **Windows** users can execute `install_tts.ps1` first to prime the Visual Studio developer shell, then run the pipeline script as above.
-- **macOS/Linux** users can run `bash "audio generation/run_audiobook_pipeline.sh"` which auto-selects a compatible Python interpreter before launching the pipeline.
-
 ## Output
 
-- Intermediate chunks: `audio generation/audio_output/chunk_*.wav` (Coqui) or `.mp3` (gTTS).
 - Final merged files: `audio generation/merged_audio_output/merged_part_###.wav` (or `.mp3` when chunks are mp3).
+- Intermediate chunks: `audio generation/audio_output/chunk_*.wav` (Coqui) or `.mp3` (gTTS) Only available when test configuration is set to true.
 
-If `test` mode is disabled, temporary audio/text files are purged at the end, leaving only merged files.
 
 ## Troubleshooting
 
@@ -85,5 +79,3 @@ If `test` mode is disabled, temporary audio/text files are purged at the end, le
 - Configurable speech rate.
 - Simplified handling of the skip-lines logic.
 - Additional language voices once validated (Italian remains experimental for now).
-
-
