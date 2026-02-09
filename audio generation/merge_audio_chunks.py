@@ -14,6 +14,12 @@ import logging
 import traceback
 import subprocess
 import warnings
+
+# Add ffmpeg to PATH before importing pydub
+ffmpeg_path = r"C:\Users\silvi\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.0.1-full_build\bin"
+if ffmpeg_path not in os.environ["PATH"]:
+    os.environ["PATH"] = ffmpeg_path + os.pathsep + os.environ["PATH"]
+
 from pydub import AudioSegment
 from moviepy import AudioFileClip
 from moviepy import concatenate_audioclips
@@ -155,7 +161,7 @@ class MergeAudioChunks:
                 # Check if we've reached or exceeded the target duration
                 if current_duration >= target_duration_ms:
                     # Save the current merged file
-                    output_filename = f"{self.book_title}_{file_counter:03d}.wav"
+                    output_filename = f"{file_counter:03d}_{self.book_title}.wav"
                     output_path = os.path.join(self.output_dir, output_filename)
                     
                     print(f"Saving merged file {file_counter}: {output_filename}")
@@ -176,7 +182,7 @@ class MergeAudioChunks:
         
         # Save any remaining audio
         if current_duration > 0:
-            output_filename = f"{self.book_title}_{file_counter:03d}.wav"
+            output_filename = f"{file_counter:03d}_{self.book_title}.wav"
             output_path = os.path.join(self.output_dir, output_filename)
             
             print(f"Saving final merged file {file_counter}: {output_filename}")
@@ -228,7 +234,7 @@ class MergeAudioChunks:
                 # Check if we've reached or exceeded the target duration
                 if current_duration >= target_duration_sec:
                     # Concatenate and save the current merged file
-                    output_filename = f"merged_part_{file_counter:03d}.mp3"
+                    output_filename = f"{file_counter:03d}_{self.book_title}.mp3"
                     output_path = os.path.join(self.output_dir, output_filename)
                     
                     print(f"Saving merged file {file_counter}: {output_filename}")
@@ -287,7 +293,7 @@ class MergeAudioChunks:
         
         # Save any remaining audio
         if current_duration > 0 and current_audio_clips:
-            output_filename = f"merged_part_{file_counter:03d}.mp3"
+            output_filename = f"{file_counter:03d}_{self.book_title}.mp3"
             output_path = os.path.join(self.output_dir, output_filename)
             
             print(f"Saving final merged file {file_counter}: {output_filename}")
