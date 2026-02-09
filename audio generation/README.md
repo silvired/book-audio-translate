@@ -69,6 +69,7 @@ The pipeline performs the following stages:
 
 ## Troubleshooting
 
+- Run the audio generation script from the main folder, do not change the directory to the audio genration folder, you will get error: ffmpeg not found.
 - **Model download failures**: ensure you have internet connectivity when the script loads the Coqui model (`tts_models/en/ljspeech/fast_pitch` for English, `tts_models/es/css10/vits` for Spanish).
 - **Out of memory**: lower the chunk size inside `text_to_speech_chunks.py` or close other GPU-intensive apps.
 - **FFmpeg errors**: confirm `ffmpeg` is installed and available on your `PATH`.
